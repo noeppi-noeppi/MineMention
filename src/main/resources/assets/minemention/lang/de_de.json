@@ -1,0 +1,8 @@
+{
+  "minemention.one_player": "Erwähne '%s'",
+  "minemention.everyone": "Erwähne jeden Spieler auf dem Server",
+  "minemention.here": "Erwähne jeden Spieler in deiner Dimension",
+  "minemention.near": "Erwähne jeden Spieler innerhalb von 100 Blöcken",
+  "minemention.reply": "Klicke zum antworten",
+  "minemention.defaults": "Standard-Erwähnungen geändert."
+}

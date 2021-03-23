@@ -1,0 +1,8 @@
+{
+  "minemention.one_player": "Mention player '%s'",
+  "minemention.everyone": "Mention every player on the server",
+  "minemention.here": "Mention every player in the same dimension",
+  "minemention.near": "Mention every player within 100 blocks",
+  "minemention.reply": "Click to reply",
+  "minemention.defaults": "Default mentions changed."
+}

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "minemention.refmap.json",
+  "package": "io.github.noeppi_noeppi.mods.minemention.mixin",
+  "minVersion": "0.8",
+  "client": [
+    "MixinChatScreen"
+  ],
+  "server": [],
+  "mixins": []
+}

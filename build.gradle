@@ -1,0 +1,15 @@
+buildscript {
+    apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/master/buildscript.gradle', to: buildscript
+}
+
+apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/master/mod.gradle'
+
+repositories {
+    maven { url = "https://maven.melanx.de/" }
+    maven { url = "https://www.cursemaven.com" }
+}
+
+dependencies {
+    compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.23")
+    runtimeOnly fg.deobf("curse.maven:emojiful-284324:3184796") 
+}
