@@ -75,14 +75,7 @@ public class EventListener {
     public void serverChat(ServerChatEvent event) {
         if (event.getMessage().trim().startsWith("\\")) return; 
         List<SpecialMention> mentions = new ArrayList<>();
-        IFormattableTextComponent text = new StringTextComponent("<");
-        text = text.append(event.getPlayer().getDisplayName().deepCopy()
-                .mergeStyle(Style.EMPTY
-                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslationTextComponent("minemention.reply")))
-                        .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + event.getPlayer().getGameProfile().getName() + " "))
-                )
-        );
-        text = text.append(new StringTextComponent("> "));
+        IFormattableTextComponent text = new StringTextComponent("");
         StringReader reader = new StringReader(event.getMessage());
         StringBuilder current = new StringBuilder();
         PlayerList playerList = event.getPlayer().getServerWorld().getServer().getPlayerList();
@@ -122,7 +115,22 @@ public class EventListener {
                 current.append(chr);
             }
         }
-        IFormattableTextComponent send = text.append(new StringTextComponent(current.toString()));
+        text = text.append(new StringTextComponent(current.toString()));
+
+        IFormattableTextComponent tooltip = new TranslationTextComponent("minemention.reply");
+        if (mentions.isEmpty()) {
+            tooltip = tooltip.append(new StringTextComponent("\n")
+                    .append(new TranslationTextComponent("minemention.sent"))
+                    .append(DefaultMentions.getDefaultMentionString(event.getPlayer())));
+        }
+
+        IFormattableTextComponent send = new StringTextComponent("<").append(event.getPlayer().getDisplayName().deepCopy()
+                .mergeStyle(Style.EMPTY
+                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))
+                        .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + event.getPlayer().getGameProfile().getName() + " "))
+                )
+        ).append(new StringTextComponent("> ")).append(text);
+
         event.setComponent(text);
         event.setCanceled(true);
         mentions = DefaultMentions.getMentions(event.getPlayer(), mentions);

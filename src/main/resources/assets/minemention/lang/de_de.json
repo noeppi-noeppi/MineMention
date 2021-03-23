@@ -4,5 +4,6 @@
   "minemention.here": "Erwähne jeden Spieler in deiner Dimension",
   "minemention.near": "Erwähne jeden Spieler innerhalb von 100 Blöcken",
   "minemention.reply": "Klicke zum antworten",
-  "minemention.defaults": "Standard-Erwähnungen geändert."
+  "minemention.defaults": "Standard-Erwähnungen geändert.",
+  "minemention.sent": "Nachricht gesendet an"
 }
