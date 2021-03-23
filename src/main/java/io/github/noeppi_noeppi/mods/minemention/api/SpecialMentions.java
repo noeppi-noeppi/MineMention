@@ -91,9 +91,7 @@ public class SpecialMentions {
     /**
      * Call this whenever the availability of one of your mentions changes.
      */
-    public static void notifyAvailabilityChange(MinecraftServer server) {
-        for (ServerPlayerEntity player : server.getPlayerList().getPlayers()) {
-            MineMention.getNetwork().updateSpecialMentions(player);
-        }
+    public static void notifyAvailabilityChange(ServerPlayerEntity player) {
+        MineMention.getNetwork().updateSpecialMentions(player);
     }
 }
