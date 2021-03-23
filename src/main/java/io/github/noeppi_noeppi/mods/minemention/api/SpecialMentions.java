@@ -22,6 +22,12 @@ public class SpecialMentions {
     private static final Map<String, ResourceLocation> defaultMentionKeys = new HashMap<>();
     private static final Set<String> blacklistDefaultMentions = new HashSet<>();
 
+    /**
+     * Registers a custom special mention
+     * @param id The id of the mention
+     * @param key How the mention should be written in chat by default. Can be changed in the config.
+     * @param mention The mention.
+     */
     public static void registerMention(ResourceLocation id, @Nullable String key, SpecialMention mention) {
         if (mentions.containsKey(id)) throw new IllegalStateException("Special mention '" + id + "' registered twice.");
         mentions.put(id, mention);
@@ -81,7 +87,10 @@ public class SpecialMentions {
         }
         return specialMentions;
     }
-    
+
+    /**
+     * Call this whenever the availability of one of your mentions changes.
+     */
     public static void notifyAvailabilityChange(MinecraftServer server) {
         for (ServerPlayerEntity player : server.getPlayerList().getPlayers()) {
             MineMention.getNetwork().updateSpecialMentions(player);
