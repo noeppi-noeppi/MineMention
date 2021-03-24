@@ -84,7 +84,9 @@ public class EventListener {
             if (chr == '@') {
                 String mentionStr = reader.readUnquotedString();
                 SpecialMention mention = SpecialMentions.getMention(mentionStr, event.getPlayer());
-                if (mention instanceof OnePlayerMention) {
+                if (mention == null) {
+                    current.append("@").append(mentionStr);
+                } else if (mention instanceof OnePlayerMention) {
                     if (playerList.getPlayerByUsername(((OnePlayerMention) mention).name) != null) {
                         mentions.add(mention);
                         text = text.append(new StringTextComponent(current.toString()));
@@ -97,7 +99,7 @@ public class EventListener {
                                 )
                         );
                     } else {
-                        current.append(mentionStr);
+                        current.append("@").append(mentionStr);
                     }
                 } else {
                     mentions.add(mention);
