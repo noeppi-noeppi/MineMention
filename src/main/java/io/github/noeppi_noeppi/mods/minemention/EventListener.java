@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.StringReader;
 import io.github.noeppi_noeppi.libx.event.ConfigLoadedEvent;
 import io.github.noeppi_noeppi.libx.render.RenderHelper;
+import io.github.noeppi_noeppi.libx.util.TextComponentUtil;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
 import io.github.noeppi_noeppi.mods.minemention.client.ClientMentions;
@@ -140,6 +141,7 @@ public class EventListener {
         List<Predicate<ServerPlayerEntity>> predicates = mentions.stream().map(m -> m.selectPlayers(event.getPlayer())).collect(ImmutableList.toImmutableList());
         // Always show message to sender.
         Predicate<ServerPlayerEntity> predicate = player -> player == event.getPlayer() || predicates.stream().anyMatch(p -> p.test(player));
+        MineMention.logger.info(TextComponentUtil.getConsoleString(send));
         playerList.getPlayers().stream().filter(predicate).forEach(player -> player.sendMessage(send, event.getPlayer().getGameProfile().getId()));
     }
     
