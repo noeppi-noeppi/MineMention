@@ -22,7 +22,7 @@ public class SuggestionUtil {
         List<Suggestion> result = new ArrayList<>();
 
         for (Pair<String, ITextComponent> suggestion : suggestions) {
-            if (ISuggestionProvider.func_237256_a_(remaining, suggestion.getLeft().toLowerCase(Locale.ROOT))
+            if (ISuggestionProvider.shouldSuggest(remaining, suggestion.getLeft().toLowerCase(Locale.ROOT))
                     && !suggestion.getLeft().equalsIgnoreCase(remaining)) {
                 result.add(new Suggestion(StringRange.between(builder.getStart(), builder.getInput().length()), suggestion.getLeft(), () -> suggestion.getRight().getString()));
             }

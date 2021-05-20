@@ -34,10 +34,10 @@ public class MixinChatScreen {
     }
     
     @Inject(
-            method = "Lnet/minecraft/client/gui/screen/ChatScreen;func_212997_a(Ljava/lang/String;)V",
+            method = "Lnet/minecraft/client/gui/screen/ChatScreen;inputUpdate(Ljava/lang/String;)V",
             at = @At("RETURN")
     )
-    public void func_212997_a(String str, CallbackInfo ci) {
+    public void inputUpdate(String str, CallbackInfo ci) {
         this.mentions.shouldAutoSuggest(true/*((ChatScreen) (Object) this).inputField.getText().endsWith("@")*/);
         this.mentions.init();
     }

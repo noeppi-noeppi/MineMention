@@ -90,9 +90,9 @@ public class EventListener {
                 } else if (mention instanceof OnePlayerMention) {
                     if (playerList.getPlayerByUsername(((OnePlayerMention) mention).name) != null) {
                         mentions.add(mention);
-                        text = text.append(new StringTextComponent(current.toString()));
+                        text = text.appendSibling(new StringTextComponent(current.toString()));
                         current = new StringBuilder();
-                        text = text.append(new StringTextComponent("@" + mentionStr)
+                        text = text.appendSibling(new StringTextComponent("@" + mentionStr)
                                 .mergeStyle(MentionType.PLAYER.getStyle())
                                 .mergeStyle(Style.EMPTY
                                         .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslationTextComponent("minemention.reply")))
@@ -104,9 +104,9 @@ public class EventListener {
                     }
                 } else {
                     mentions.add(mention);
-                    text = text.append(new StringTextComponent(current.toString()));
+                    text = text.appendSibling(new StringTextComponent(current.toString()));
                     current = new StringBuilder();
-                    text = text.append(new StringTextComponent("@" + mentionStr)
+                    text = text.appendSibling(new StringTextComponent("@" + mentionStr)
                             .mergeStyle(MentionType.GROUP.getStyle())
                             .mergeStyle(Style.EMPTY
                                     .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslationTextComponent("minemention.reply")))
@@ -118,21 +118,21 @@ public class EventListener {
                 current.append(chr);
             }
         }
-        text = text.append(new StringTextComponent(current.toString()));
+        text = text.appendSibling(new StringTextComponent(current.toString()));
 
         IFormattableTextComponent tooltip = new TranslationTextComponent("minemention.reply");
         if (mentions.isEmpty()) {
-            tooltip = tooltip.append(new StringTextComponent("\n")
-                    .append(new TranslationTextComponent("minemention.sent"))
-                    .append(DefaultMentions.getDefaultMentionString(event.getPlayer())));
+            tooltip = tooltip.appendSibling(new StringTextComponent("\n")
+                    .appendSibling(new TranslationTextComponent("minemention.sent"))
+                    .appendSibling(DefaultMentions.getDefaultMentionString(event.getPlayer())));
         }
 
-        IFormattableTextComponent send = new StringTextComponent("<").append(event.getPlayer().getDisplayName().deepCopy()
+        IFormattableTextComponent send = new StringTextComponent("<").appendSibling(event.getPlayer().getDisplayName().deepCopy()
                 .mergeStyle(Style.EMPTY
                         .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))
                         .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + event.getPlayer().getGameProfile().getName() + " "))
                 )
-        ).append(new StringTextComponent("> ")).append(text);
+        ).appendSibling(new StringTextComponent("> ")).appendSibling(text);
 
         event.setComponent(text);
         event.setCanceled(true);
@@ -162,7 +162,7 @@ public class EventListener {
             RenderSystem.color4f(0, 0, 0, (float) mc.gameSettings.accessibilityTextBackgroundOpacity);
             AbstractGui.blit(matrixStack, 0, 0, 0, 0, width + 4, font.FONT_HEIGHT + 4, 256, 256);
             RenderSystem.disableBlend();
-            font.func_243246_a(matrixStack, ClientMentions.getCurrentDefault(), 2, 2, 0xFFFFFF);
+            font.drawTextWithShadow(matrixStack, ClientMentions.getCurrentDefault(), 2, 2, 0xFFFFFF);
             matrixStack.pop();
         }
     }

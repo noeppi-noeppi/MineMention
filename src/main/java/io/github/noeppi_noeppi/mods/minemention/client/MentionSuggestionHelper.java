@@ -132,6 +132,6 @@ public class MentionSuggestionHelper extends CommandSuggestionHelper {
         if (current - clipFront <= command.length()) {
             list.add(IReorderingProcessor.fromString(command.substring(Math.max(0, current - clipFront)), Style.EMPTY));
         }
-        return IReorderingProcessor.func_242241_a(list);
+        return IReorderingProcessor.fromList(list);
     }
 }
