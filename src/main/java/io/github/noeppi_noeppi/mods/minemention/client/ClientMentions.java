@@ -1,6 +1,7 @@
 package io.github.noeppi_noeppi.mods.minemention.client;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.noeppi_noeppi.libx.util.Misc;
 import io.github.noeppi_noeppi.mods.minemention.MentionType;
 import net.minecraft.util.text.*;
 import org.apache.commons.lang3.tuple.Pair;
@@ -10,7 +11,7 @@ import java.util.*;
 public class ClientMentions {
 
     private static Map<String, ITextComponent> special = ImmutableMap.of();
-    private static ITextComponent currentDefault = new StringTextComponent("test");
+    private static ITextComponent currentDefault = new StringTextComponent("error: not yet received");
     
     public static MentionType getType(String key, Collection<String> players) {
         if (special.containsKey(key)) {

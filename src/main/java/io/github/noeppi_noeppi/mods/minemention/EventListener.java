@@ -28,6 +28,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
@@ -90,7 +91,7 @@ public class EventListener {
                 } else if (mention instanceof OnePlayerMention) {
                     if (playerList.getPlayerByUsername(((OnePlayerMention) mention).name) != null) {
                         mentions.add(mention);
-                        text = text.appendSibling(new StringTextComponent(current.toString()));
+                        text = text.appendSibling(ForgeHooks.newChatWithLinks(current.toString()));
                         current = new StringBuilder();
                         text = text.appendSibling(new StringTextComponent("@" + mentionStr)
                                 .mergeStyle(MentionType.PLAYER.getStyle())
@@ -104,7 +105,7 @@ public class EventListener {
                     }
                 } else {
                     mentions.add(mention);
-                    text = text.appendSibling(new StringTextComponent(current.toString()));
+                    text = text.appendSibling(ForgeHooks.newChatWithLinks(current.toString()));
                     current = new StringBuilder();
                     text = text.appendSibling(new StringTextComponent("@" + mentionStr)
                             .mergeStyle(MentionType.GROUP.getStyle())
@@ -118,7 +119,7 @@ public class EventListener {
                 current.append(chr);
             }
         }
-        text = text.appendSibling(new StringTextComponent(current.toString()));
+        text = text.appendSibling(ForgeHooks.newChatWithLinks(current.toString()));
 
         IFormattableTextComponent tooltip = new TranslationTextComponent("minemention.reply");
         if (mentions.isEmpty()) {
