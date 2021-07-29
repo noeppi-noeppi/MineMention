@@ -1,9 +1,9 @@
 package io.github.noeppi_noeppi.mods.minemention.mentions;
 
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Predicate;
 
@@ -16,12 +16,12 @@ public class HereMention implements SpecialMention {
     }
 
     @Override
-    public IFormattableTextComponent description() {
-        return new TranslationTextComponent("minemention.here");
+    public MutableComponent description() {
+        return new TranslatableComponent("minemention.here");
     }
 
     @Override
-    public Predicate<ServerPlayerEntity> selectPlayers(ServerPlayerEntity sender) {
-        return player -> sender.world.getDimensionKey().equals(player.world.getDimensionKey());
+    public Predicate<ServerPlayer> selectPlayers(ServerPlayer sender) {
+        return player -> sender.level.dimension().equals(player.level.dimension());
     }
 }

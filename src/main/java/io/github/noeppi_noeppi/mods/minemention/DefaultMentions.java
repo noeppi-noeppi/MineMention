@@ -4,11 +4,11 @@ import com.google.common.collect.ImmutableList;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
 import io.github.noeppi_noeppi.mods.minemention.mentions.OnePlayerMention;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class DefaultMentions {
 
-    public static List<SpecialMention> getMentions(ServerPlayerEntity player, List<SpecialMention> explicit) {
+    public static List<SpecialMention> getMentions(ServerPlayer player, List<SpecialMention> explicit) {
         if (!explicit.isEmpty()) {
             return explicit;
         }
@@ -30,29 +30,29 @@ public class DefaultMentions {
                 .collect(Collectors.toList());
     }
     
-    public static IFormattableTextComponent getDefaultMentionString(ServerPlayerEntity player) {
+    public static MutableComponent getDefaultMentionString(ServerPlayer player) {
         List<Pair<String, SpecialMention>> list = getMentionStrings(player).stream()
                 .map(m -> Pair.of(m, SpecialMentions.getMention(m, player)))
                 .filter(m -> m.getRight() != null)
                 .filter(m -> m.getRight().available(player))
                 .collect(Collectors.toList());
-        IFormattableTextComponent text = new StringTextComponent("");
+        MutableComponent text = new TextComponent("");
         List<Pair<String, SpecialMention>> special = list.stream().filter(m -> !(m.getRight() instanceof OnePlayerMention)).collect(Collectors.toList());
         List<Pair<String, SpecialMention>> players = list.stream().filter(m -> m.getRight() instanceof OnePlayerMention).collect(Collectors.toList());
         special.sort(Comparator.comparing(m -> m.getLeft().toLowerCase()));
         special.sort(Comparator.comparing(m -> m.getLeft().toLowerCase()));
         for (Pair<String, SpecialMention> mention : special) {
-            text = text.appendSibling(new StringTextComponent(" ")).appendSibling(new StringTextComponent("@" + mention.getLeft()).mergeStyle(MentionType.GROUP.getStyle()));
+            text = text.append(new TextComponent(" ")).append(new TextComponent("@" + mention.getLeft()).withStyle(MentionType.GROUP.getStyle()));
         }
         for (Pair<String, SpecialMention> mention : players) {
-            text = text.appendSibling(new StringTextComponent(" ")).appendSibling(new StringTextComponent("@" + mention.getLeft()).mergeStyle(MentionType.PLAYER.getStyle()));
+            text = text.append(new TextComponent(" ")).append(new TextComponent("@" + mention.getLeft()).withStyle(MentionType.PLAYER.getStyle()));
         }
         return text;
     }
     
-    private static List<String> getMentionStrings(ServerPlayerEntity player) {
+    private static List<String> getMentionStrings(ServerPlayer player) {
         if (player.getPersistentData().contains("minemention_default", Constants.NBT.TAG_LIST)) {
-            ListNBT list = player.getPersistentData().getList("minemention_default", Constants.NBT.TAG_STRING);
+            ListTag list = player.getPersistentData().getList("minemention_default", Constants.NBT.TAG_STRING);
             ImmutableList.Builder<String> strings = ImmutableList.builder();
             if (list.isEmpty()) {
                 strings.add("everyone");
@@ -67,13 +67,13 @@ public class DefaultMentions {
         }
     }
     
-    public static void updateMentionStrings(ServerPlayerEntity player, @Nullable List<String> strings) {
+    public static void updateMentionStrings(ServerPlayer player, @Nullable List<String> strings) {
         if (strings == null) {
             player.getPersistentData().remove("minemention_default");
         } else {
-            ListNBT list = new ListNBT();
+            ListTag list = new ListTag();
             for (String str : strings) {
-                list.add(StringNBT.valueOf(str));
+                list.add(StringTag.valueOf(str));
             }
             player.getPersistentData().put("minemention_default", list);
         }

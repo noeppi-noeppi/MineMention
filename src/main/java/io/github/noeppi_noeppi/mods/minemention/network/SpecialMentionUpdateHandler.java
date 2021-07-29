@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.minemention.network;
 
 import io.github.noeppi_noeppi.mods.minemention.client.ClientMentions;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

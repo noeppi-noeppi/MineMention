@@ -5,10 +5,9 @@ import io.github.noeppi_noeppi.mods.minemention.MineMentionConfig;
 import io.github.noeppi_noeppi.mods.minemention.mentions.EveryoneMention;
 import io.github.noeppi_noeppi.mods.minemention.mentions.NoneMention;
 import io.github.noeppi_noeppi.mods.minemention.mentions.OnePlayerMention;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public class SpecialMentions {
     }
     
     @Nullable
-    public static SpecialMention getMention(String mention, ServerPlayerEntity player) {
+    public static SpecialMention getMention(String mention, ServerPlayer player) {
         if ("everyone".equals(mention)) {
             return EveryoneMention.INSTANCE;
         } else if (MineMentionConfig.mentions.containsKey(mention)
@@ -62,8 +61,8 @@ public class SpecialMentions {
         }
     }
     
-    public static Map<String, ITextComponent> getSyncPacket(ServerPlayerEntity player) {
-        Map<String, ITextComponent> specialMentions = new HashMap<>();
+    public static Map<String, Component> getSyncPacket(ServerPlayer player) {
+        Map<String, Component> specialMentions = new HashMap<>();
         // Add defaults first, so later calls with the ones frm the config will replace them
         for (Map.Entry<String, ResourceLocation> entry : defaultMentionKeys.entrySet()) {
             if (mentions.containsKey(entry.getValue())) {
@@ -91,7 +90,7 @@ public class SpecialMentions {
     /**
      * Call this whenever the availability of one of your mentions changes.
      */
-    public static void notifyAvailabilityChange(@Nullable ServerPlayerEntity player) {
+    public static void notifyAvailabilityChange(@Nullable ServerPlayer player) {
         if (player != null) {
             MineMention.getNetwork().updateSpecialMentions(player);
         }

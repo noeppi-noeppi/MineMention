@@ -2,8 +2,8 @@ package io.github.noeppi_noeppi.mods.minemention.network;
 
 import com.google.common.collect.ImmutableMap;
 import io.github.noeppi_noeppi.libx.network.PacketSerializer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 
 import java.util.Map;
 
@@ -16,31 +16,31 @@ public class SpecialMentionUpdateSerializer implements PacketSerializer<SpecialM
     }
 
     @Override
-    public void encode(SpecialMentionUpdateMessage msg, PacketBuffer buffer) {
+    public void encode(SpecialMentionUpdateMessage msg, FriendlyByteBuf buffer) {
         buffer.writeVarInt(msg.specialMentions.size());
-        for (Map.Entry<String, ITextComponent> entry : msg.specialMentions.entrySet()) {
-            buffer.writeString(entry.getKey(), 0x7fff);
-            buffer.writeTextComponent(entry.getValue());
+        for (Map.Entry<String, Component> entry : msg.specialMentions.entrySet()) {
+            buffer.writeUtf(entry.getKey(), 0x7fff);
+            buffer.writeComponent(entry.getValue());
         }
-        buffer.writeTextComponent(msg.defaultMentions);
+        buffer.writeComponent(msg.defaultMentions);
     }
 
     @Override
-    public SpecialMentionUpdateMessage decode(PacketBuffer buffer) {
-        ImmutableMap.Builder<String, ITextComponent> builder = ImmutableMap.builder();
+    public SpecialMentionUpdateMessage decode(FriendlyByteBuf buffer) {
+        ImmutableMap.Builder<String, Component> builder = ImmutableMap.builder();
         int size = buffer.readVarInt();
         for (int i = 0; i< size; i++) {
-            builder.put(buffer.readString(0x7fff), buffer.readTextComponent());
+            builder.put(buffer.readUtf(0x7fff), buffer.readComponent());
         }
-        return new SpecialMentionUpdateMessage(builder.build(), buffer.readTextComponent());
+        return new SpecialMentionUpdateMessage(builder.build(), buffer.readComponent());
     }
 
     public static class SpecialMentionUpdateMessage {
         
-        public final Map<String, ITextComponent> specialMentions;
-        public final ITextComponent defaultMentions;
+        public final Map<String, Component> specialMentions;
+        public final Component defaultMentions;
 
-        public SpecialMentionUpdateMessage(Map<String, ITextComponent> specialMentions, ITextComponent defaultMentions) {
+        public SpecialMentionUpdateMessage(Map<String, Component> specialMentions, Component defaultMentions) {
             this.specialMentions = specialMentions;
             this.defaultMentions = defaultMentions;
         }

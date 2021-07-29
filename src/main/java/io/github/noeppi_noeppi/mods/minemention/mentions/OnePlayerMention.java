@@ -1,9 +1,9 @@
 package io.github.noeppi_noeppi.mods.minemention.mentions;
 
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Predicate;
 
@@ -16,17 +16,17 @@ public class OnePlayerMention implements SpecialMention {
     }
 
     @Override
-    public IFormattableTextComponent description() {
-        return new TranslationTextComponent("minemention.one_player", this.name);
+    public MutableComponent description() {
+        return new TranslatableComponent("minemention.one_player", this.name);
     }
 
     @Override
-    public Predicate<ServerPlayerEntity> selectPlayers(ServerPlayerEntity sender) {
+    public Predicate<ServerPlayer> selectPlayers(ServerPlayer sender) {
         return player -> this.name.equals(player.getGameProfile().getName());
     }
 
     @Override
-    public boolean available(ServerPlayerEntity sender) {
-        return sender.getServerWorld().getServer().getPlayerList().getPlayerByUsername(this.name) != null;
+    public boolean available(ServerPlayer sender) {
+        return sender.getLevel().getServer().getPlayerList().getPlayerByName(this.name) != null;
     }
 }

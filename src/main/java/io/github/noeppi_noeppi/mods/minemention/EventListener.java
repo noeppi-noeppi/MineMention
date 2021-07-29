@@ -1,30 +1,25 @@
 package io.github.noeppi_noeppi.mods.minemention;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.StringReader;
 import io.github.noeppi_noeppi.libx.event.ConfigLoadedEvent;
 import io.github.noeppi_noeppi.libx.render.RenderHelper;
-import io.github.noeppi_noeppi.libx.util.TextComponentUtil;
+import io.github.noeppi_noeppi.libx.util.ComponentUtil;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
 import io.github.noeppi_noeppi.mods.minemention.client.ClientMentions;
 import io.github.noeppi_noeppi.mods.minemention.commands.MineMentionCommands;
 import io.github.noeppi_noeppi.mods.minemention.mentions.OnePlayerMention;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.server.management.PlayerList;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.network.chat.*;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -46,16 +41,16 @@ public class EventListener {
     
     @SubscribeEvent
     public void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getPlayer() instanceof ServerPlayerEntity) {
-            MineMention.getNetwork().updateSpecialMentions((ServerPlayerEntity) event.getPlayer());
+        if (event.getPlayer() instanceof ServerPlayer) {
+            MineMention.getNetwork().updateSpecialMentions((ServerPlayer) event.getPlayer());
         }
     }
     
     @SubscribeEvent
     public void serverTick(TickEvent.WorldTickEvent event) {
-        if (this.needsUpdate && event.phase == TickEvent.Phase.START && event.world instanceof ServerWorld) {
+        if (this.needsUpdate && event.phase == TickEvent.Phase.START && event.world instanceof ServerLevel) {
             this.needsUpdate = false;
-            for (ServerPlayerEntity player : ((ServerWorld) event.world).getServer().getPlayerList().getPlayers()) {
+            for (ServerPlayer player : ((ServerLevel) event.world).getServer().getPlayerList().getPlayers()) {
                 MineMention.getNetwork().updateSpecialMentions(player);
             }
         }
@@ -77,10 +72,10 @@ public class EventListener {
     public void serverChat(ServerChatEvent event) {
         if (event.getMessage().trim().startsWith("\\")) return; 
         List<SpecialMention> mentions = new ArrayList<>();
-        IFormattableTextComponent text = new StringTextComponent("");
+        MutableComponent text = new TextComponent("");
         StringReader reader = new StringReader(event.getMessage());
         StringBuilder current = new StringBuilder();
-        PlayerList playerList = event.getPlayer().getServerWorld().getServer().getPlayerList();
+        PlayerList playerList = event.getPlayer().getLevel().getServer().getPlayerList();
         while (reader.canRead()) {
             char chr = reader.read();
             if (chr == '@') {
@@ -89,15 +84,15 @@ public class EventListener {
                 if (mention == null) {
                     current.append("@").append(mentionStr);
                 } else if (mention instanceof OnePlayerMention) {
-                    if (playerList.getPlayerByUsername(((OnePlayerMention) mention).name) != null) {
+                    if (playerList.getPlayerByName(((OnePlayerMention) mention).name) != null) {
                         mentions.add(mention);
-                        text = text.appendSibling(ForgeHooks.newChatWithLinks(current.toString()));
+                        text = text.append(ForgeHooks.newChatWithLinks(current.toString()));
                         current = new StringBuilder();
-                        text = text.appendSibling(new StringTextComponent("@" + mentionStr)
-                                .mergeStyle(MentionType.PLAYER.getStyle())
-                                .mergeStyle(Style.EMPTY
-                                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslationTextComponent("minemention.reply")))
-                                        .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + mentionStr + " "))
+                        text = text.append(new TextComponent("@" + mentionStr)
+                                .withStyle(MentionType.PLAYER.getStyle())
+                                .withStyle(Style.EMPTY
+                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("minemention.reply")))
+                                        .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + mentionStr + " "))
                                 )
                         );
                     } else {
@@ -105,13 +100,13 @@ public class EventListener {
                     }
                 } else {
                     mentions.add(mention);
-                    text = text.appendSibling(ForgeHooks.newChatWithLinks(current.toString()));
+                    text = text.append(ForgeHooks.newChatWithLinks(current.toString()));
                     current = new StringBuilder();
-                    text = text.appendSibling(new StringTextComponent("@" + mentionStr)
-                            .mergeStyle(MentionType.GROUP.getStyle())
-                            .mergeStyle(Style.EMPTY
-                                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslationTextComponent("minemention.reply")))
-                                    .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + mentionStr + " "))
+                    text = text.append(new TextComponent("@" + mentionStr)
+                            .withStyle(MentionType.GROUP.getStyle())
+                            .withStyle(Style.EMPTY
+                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("minemention.reply")))
+                                    .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + mentionStr + " "))
                             )
                     );
                 }
@@ -119,30 +114,30 @@ public class EventListener {
                 current.append(chr);
             }
         }
-        text = text.appendSibling(ForgeHooks.newChatWithLinks(current.toString()));
+        text = text.append(ForgeHooks.newChatWithLinks(current.toString()));
 
-        IFormattableTextComponent tooltip = new TranslationTextComponent("minemention.reply");
+        MutableComponent tooltip = new TranslatableComponent("minemention.reply");
         if (mentions.isEmpty()) {
-            tooltip = tooltip.appendSibling(new StringTextComponent("\n")
-                    .appendSibling(new TranslationTextComponent("minemention.sent"))
-                    .appendSibling(DefaultMentions.getDefaultMentionString(event.getPlayer())));
+            tooltip = tooltip.append(new TextComponent("\n")
+                    .append(new TranslatableComponent("minemention.sent"))
+                    .append(DefaultMentions.getDefaultMentionString(event.getPlayer())));
         }
 
-        IFormattableTextComponent send = new StringTextComponent("<").appendSibling(event.getPlayer().getDisplayName().deepCopy()
-                .mergeStyle(Style.EMPTY
-                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))
-                        .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + event.getPlayer().getGameProfile().getName() + " "))
+        MutableComponent send = new TextComponent("<").append(event.getPlayer().getDisplayName().copy()
+                .withStyle(Style.EMPTY
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + event.getPlayer().getGameProfile().getName() + " "))
                 )
-        ).appendSibling(new StringTextComponent("> ")).appendSibling(text);
+        ).append(new TextComponent("> ")).append(text);
 
         event.setComponent(text);
         event.setCanceled(true);
         mentions = DefaultMentions.getMentions(event.getPlayer(), mentions);
         //noinspection UnstableApiUsage
-        List<Predicate<ServerPlayerEntity>> predicates = mentions.stream().map(m -> m.selectPlayers(event.getPlayer())).collect(ImmutableList.toImmutableList());
+        List<Predicate<ServerPlayer>> predicates = mentions.stream().map(m -> m.selectPlayers(event.getPlayer())).collect(ImmutableList.toImmutableList());
         // Always show message to sender.
-        Predicate<ServerPlayerEntity> predicate = player -> player == event.getPlayer() || predicates.stream().anyMatch(p -> p.test(player));
-        MineMention.logger.info(TextComponentUtil.getConsoleString(send));
+        Predicate<ServerPlayer> predicate = player -> player == event.getPlayer() || predicates.stream().anyMatch(p -> p.test(player));
+        MineMention.logger.info(ComponentUtil.getConsoleString(send));
         playerList.getPlayers().stream().filter(predicate).forEach(player -> player.sendMessage(send, event.getPlayer().getGameProfile().getId()));
     }
     
@@ -150,21 +145,20 @@ public class EventListener {
     @OnlyIn(Dist.CLIENT)
     public void renderChat(RenderGameOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
-        if (event.getType() == RenderGameOverlayEvent.ElementType.CHAT && mc.currentScreen instanceof ChatScreen) {
-            MatrixStack matrixStack = event.getMatrixStack();
-            matrixStack.push();
-            FontRenderer font = mc.fontRenderer;
-            int width = font.getStringPropertyWidth(ClientMentions.getCurrentDefault());
-            matrixStack.translate(event.getWindow().getScaledWidth() - (width + 6), event.getWindow().getScaledHeight() - (2 * (font.FONT_HEIGHT + 6)), 0);
+        if (event.getType() == RenderGameOverlayEvent.ElementType.CHAT && mc.screen instanceof ChatScreen) {
+            PoseStack poseStack = event.getMatrixStack();
+            poseStack.pushPose();
+            Font font = mc.font;
+            int width = font.width(ClientMentions.getCurrentDefault());
+            poseStack.translate(event.getWindow().getGuiScaledWidth() - (width + 6), event.getWindow().getGuiScaledHeight() - (2 * (font.lineHeight + 6)), 0);
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            mc.getTextureManager().bindTexture(RenderHelper.TEXTURE_WHITE);
-            //noinspection deprecation
-            RenderSystem.color4f(0, 0, 0, (float) mc.gameSettings.accessibilityTextBackgroundOpacity);
-            AbstractGui.blit(matrixStack, 0, 0, 0, 0, width + 4, font.FONT_HEIGHT + 4, 256, 256);
+            RenderSystem.setShaderTexture(0, RenderHelper.TEXTURE_WHITE);
+            RenderSystem.setShaderColor(0, 0, 0, (float) mc.options.textBackgroundOpacity);
+            GuiComponent.blit(poseStack, 0, 0, 0, 0, width + 4, font.lineHeight + 4, 256, 256);
             RenderSystem.disableBlend();
-            font.drawTextWithShadow(matrixStack, ClientMentions.getCurrentDefault(), 2, 2, 0xFFFFFF);
-            matrixStack.pop();
+            font.drawShadow(poseStack, ClientMentions.getCurrentDefault(), 2, 2, 0xFFFFFF);
+            poseStack.popPose();
         }
     }
 }

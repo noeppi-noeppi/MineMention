@@ -4,11 +4,14 @@ import com.mojang.brigadier.context.StringRange;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -17,12 +20,12 @@ public class SuggestionUtil {
     // The method in ISuggestionProvider sorts he suggestions. We sort them ourselves to
     // have special mentions over player mentions. So this is required which prevents
     // them from being sorted again.
-    public static CompletableFuture<Suggestions> suggest(List<Pair<String, ITextComponent>> suggestions, SuggestionsBuilder builder) {
+    public static CompletableFuture<Suggestions> suggest(List<Pair<String, Component>> suggestions, SuggestionsBuilder builder) {
         String remaining = builder.getRemaining().toLowerCase();
         List<Suggestion> result = new ArrayList<>();
 
-        for (Pair<String, ITextComponent> suggestion : suggestions) {
-            if (ISuggestionProvider.shouldSuggest(remaining, suggestion.getLeft().toLowerCase(Locale.ROOT))
+        for (Pair<String, Component> suggestion : suggestions) {
+            if (SharedSuggestionProvider.matchesSubStr(remaining, suggestion.getLeft().toLowerCase(Locale.ROOT))
                     && !suggestion.getLeft().equalsIgnoreCase(remaining)) {
                 result.add(new Suggestion(StringRange.between(builder.getStart(), builder.getInput().length()), suggestion.getLeft(), () -> suggestion.getRight().getString()));
             }

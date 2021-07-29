@@ -5,16 +5,16 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class DefaultMentionSuggestions {
     
-    public static CompletableFuture<Suggestions> suggest(CommandContext<CommandSource> context, SuggestionsBuilder builder) {
+    public static CompletableFuture<Suggestions> suggest(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
         try {
             String current = context.getInput().substring(builder.getStart());
             String others;
@@ -24,13 +24,13 @@ public class DefaultMentionSuggestions {
             } else {
                 others = "";
             }
-            Map<String, ITextComponent> suggestions = SpecialMentions.getSyncPacket(context.getSource().asPlayer());
-            for (Map.Entry<String, ITextComponent> entry : suggestions.entrySet()) {
+            Map<String, Component> suggestions = SpecialMentions.getSyncPacket(context.getSource().getPlayerOrException());
+            for (Map.Entry<String, Component> entry : suggestions.entrySet()) {
                 if (entry.getKey().toLowerCase().startsWith(current.toLowerCase())) {
                     builder.suggest(others + entry.getKey(), () -> entry.getValue().getString());
                 }
             }
-            for (ServerPlayerEntity player : context.getSource().asPlayer().getServerWorld().getServer().getPlayerList().getPlayers()) {
+            for (ServerPlayer player : context.getSource().getPlayerOrException().getLevel().getServer().getPlayerList().getPlayers()) {
                 if (player.getGameProfile().getName().toLowerCase().startsWith(current.toLowerCase())) {
                     builder.suggest(others + player.getGameProfile().getName());
                 }
