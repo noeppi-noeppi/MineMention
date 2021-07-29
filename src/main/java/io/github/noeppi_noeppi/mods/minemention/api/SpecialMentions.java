@@ -28,6 +28,7 @@ public class SpecialMentions {
      * @param mention The mention.
      */
     public static void registerMention(ResourceLocation id, @Nullable String key, SpecialMention mention) {
+        if ("everyone".equals(key) && mention != EveryoneMention.INSTANCE) throw new IllegalStateException("Registering mentions with the default key 'everyone' is not allowed.");
         if (mentions.containsKey(id)) throw new IllegalStateException("Special mention '" + id + "' registered twice.");
         mentions.put(id, mention);
         if (key != null) {
@@ -46,13 +47,17 @@ public class SpecialMentions {
         if ("everyone".equals(mention)) {
             return EveryoneMention.INSTANCE;
         } else if (MineMentionConfig.mentions.containsKey(mention)
-                && mentions.containsKey(MineMentionConfig.mentions.get(mention))
-                && mentions.get(MineMentionConfig.mentions.get(mention)) != NoneMention.INSTANCE) {
+                && mentions.containsKey(MineMentionConfig.mentions.get(mention))) {
+            if (mentions.get(MineMentionConfig.mentions.get(mention)) == NoneMention.INSTANCE) {
+                return null;
+            }
             SpecialMention m = mentions.get(MineMentionConfig.mentions.get(mention));
             return m.available(player) ? m : null;
         } else if (defaultMentionKeys.containsKey(mention)
-                && mentions.containsKey(defaultMentionKeys.get(mention))
-                && mentions.get(defaultMentionKeys.get(mention)) != NoneMention.INSTANCE) {
+                && mentions.containsKey(defaultMentionKeys.get(mention))) {
+            if (mentions.get(defaultMentionKeys.get(mention)) == NoneMention.INSTANCE) {
+                return null;
+            }
             SpecialMention m = mentions.get(defaultMentionKeys.get(mention));
             return m.available(player) ? m : null;
         } else {
