@@ -7,13 +7,11 @@ apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/master/mod
 repositories {
     maven { url = "https://maven.melanx.de/" }
     maven { url = "https://www.cursemaven.com" }
-    maven { url = "https://maven.latmod.com" }
 }
 
 dependencies {
     annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.63")
     
     compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.63")
-    compile fg.deobf("com.feed_the_beast.mods:ftb-teams:1604.1.0.13")
     runtimeOnly fg.deobf("curse.maven:emojiful-284324:3184796")
 }
