@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod("minemention")
-public class MineMention extends ModX {
+public final class MineMention extends ModX {
     
     public static final Logger logger = LogManager.getLogger();
     
