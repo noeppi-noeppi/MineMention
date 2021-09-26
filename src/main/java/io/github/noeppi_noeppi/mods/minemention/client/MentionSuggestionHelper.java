@@ -86,9 +86,6 @@ public class MentionSuggestionHelper extends CommandSuggestions {
             }
         }
         if (current != null) {
-            List<String> list = new ArrayList<>();
-            list.add("team");
-            list.addAll(players);
             this.pendingSuggestions = SuggestionUtil.suggest(ClientMentions.suggest(players), new SuggestionsBuilder(cs, at));
             this.pendingSuggestions.thenRun(() -> {
                 if (this.allowSuggestions && this.minecraft.options.autoSuggestions) {
