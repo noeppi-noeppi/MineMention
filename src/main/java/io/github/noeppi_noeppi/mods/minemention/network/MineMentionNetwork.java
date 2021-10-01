@@ -15,8 +15,8 @@ public class MineMentionNetwork extends NetworkX {
     }
 
     @Override
-    protected String getProtocolVersion() {
-        return "1";
+    protected Protocol getProtocol() {
+        return Protocol.of("1");
     }
 
     @Override
@@ -25,6 +25,6 @@ public class MineMentionNetwork extends NetworkX {
     }
     
     public void updateSpecialMentions(ServerPlayer player) {
-        this.instance.send(PacketDistributor.PLAYER.with(() -> player), new SpecialMentionUpdateSerializer.SpecialMentionUpdateMessage(SpecialMentions.getSyncPacket(player), DefaultMentions.getDefaultMentionString(player)));
+        this.channel.send(PacketDistributor.PLAYER.with(() -> player), new SpecialMentionUpdateSerializer.SpecialMentionUpdateMessage(SpecialMentions.getSyncPacket(player), DefaultMentions.getDefaultMentionString(player)));
     }
 }
