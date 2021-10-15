@@ -25,12 +25,18 @@ public class MentionSuggestionHelper extends CommandSuggestions {
     private final CommandSuggestions commands;
     private final List<Triple<Integer, Integer, MentionType>> highlights = new ArrayList<>();
     
-    public MentionSuggestionHelper(CommandSuggestions commands, Minecraft mc, Screen screen, EditBox inputField, Font font, int min, int max) {
+    // Factory method, so we can get the parent formatter for commands before the super constructor
+    // replaces that with a no-op formatter.
+    public static MentionSuggestionHelper create(CommandSuggestions commands, Minecraft mc, Screen screen, Font font, int min, int max) {
+        BiFunction<String, Integer, FormattedCharSequence> parentFormatter = commands.input.formatter;
+        return new MentionSuggestionHelper(commands, mc, screen, commands.input, font, min, max, parentFormatter);
+    }
+    
+    private MentionSuggestionHelper(CommandSuggestions commands, Minecraft mc, Screen screen, EditBox inputField, Font font, int min, int max, BiFunction<String, Integer, FormattedCharSequence> parentFormatter) {
         super(mc, screen, inputField, font, false, false, min, max, true, 0xD0000000);
         this.commands = commands;
-        BiFunction<String, Integer, FormattedCharSequence> parentFormatter =  this.input.formatter;
         this.input.setFormatter((str, clipFront) -> {
-            if (str.trim().startsWith("/") || commands.commandsOnly) {
+            if (str.strip().startsWith("/") || commands.commandsOnly) {
                 return parentFormatter.apply(str, clipFront);
             } else {
                 return this.formatMentionChat(str, clipFront);
@@ -39,10 +45,7 @@ public class MentionSuggestionHelper extends CommandSuggestions {
     }
 
     public void updateCommandInfo() {
-        String s = this.input.getValue();
-        if (this.currentParse != null && !this.currentParse.getReader().getString().equals(s)) {
-            this.currentParse = null;
-        }
+        String input = this.input.getValue();
 
         if (!this.keepSuggestions) {
             this.input.setSuggestion(null);
@@ -50,8 +53,8 @@ public class MentionSuggestionHelper extends CommandSuggestions {
         }
 
         this.commandUsage.clear();
-        StringReader reader = new StringReader(s);
-        String cs = s.substring(0, this.input.getCursorPosition());
+        StringReader reader = new StringReader(input);
+        String cs = input.substring(0, this.input.getCursorPosition());
 
         reader.skipWhitespace();
         if ((reader.canRead() && reader.peek() == '/') || this.commands.commandsOnly) {

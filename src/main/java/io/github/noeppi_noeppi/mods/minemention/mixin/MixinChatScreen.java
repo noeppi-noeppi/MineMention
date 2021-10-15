@@ -21,7 +21,7 @@ public class MixinChatScreen {
             at = @At("RETURN")
     )
     public void constructor(CallbackInfo ci) {
-        this.mentions = new MentionSuggestionHelper(((ChatScreen) (Object) this).commandSuggestions, ((ChatScreen) (Object) this).minecraft, (ChatScreen) (Object) this, ((ChatScreen) (Object) this).input, ((ChatScreen) (Object) this).font, 1, 10);
+        this.mentions = MentionSuggestionHelper.create(((ChatScreen) (Object) this).commandSuggestions, ((ChatScreen) (Object) this).minecraft, (ChatScreen) (Object) this, ((ChatScreen) (Object) this).font, 1, 10);
         this.mentions.updateCommandInfo();
     }
 
