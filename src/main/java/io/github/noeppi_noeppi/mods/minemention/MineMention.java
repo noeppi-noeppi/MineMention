@@ -24,7 +24,6 @@ public final class MineMention extends ModX {
     private static MineMentionNetwork network;
     
     public MineMention() {
-        super("minemention", null);
         instance = this;
         network = new MineMentionNetwork(this);
         

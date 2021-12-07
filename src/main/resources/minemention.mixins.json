@@ -1,6 +1,6 @@
 {
   "required": true,
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "minemention.refmap.json",
   "package": "io.github.noeppi_noeppi.mods.minemention.mixin",
   "minVersion": "0.8",

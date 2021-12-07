@@ -1,8 +1,8 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/v2/buildscript.gradle', to: buildscript
+    apply from: 'https://noeppi-noeppi.github.io/ModUtils/v3/buildscript.gradle', to: buildscript
 }
 
-apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/v2/mod.gradle'
+apply from: 'https://noeppi-noeppi.github.io/ModUtils/v3/mod.gradle'
 
 repositories {
     maven { url = "https://maven.melanx.de/" }
@@ -11,10 +11,7 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.17.1-2.1.9")
+    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18-3.0.0")
     
-    implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.17.1-2.1.9")
-    // TODO readd dependencies
-//    implementation fg.deobf("com.feed_the_beast.mods:ftb-teams:1604.1.0.13")
-//    runtimeOnly fg.deobf("curse.maven:emojiful-284324:3184796")
+    implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18-3.0.0")
 }

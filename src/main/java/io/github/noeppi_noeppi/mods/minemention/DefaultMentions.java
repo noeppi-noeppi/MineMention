@@ -6,10 +6,10 @@ import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
 import io.github.noeppi_noeppi.mods.minemention.mentions.OnePlayerMention;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -35,12 +35,12 @@ public class DefaultMentions {
                 .map(m -> Pair.of(m, SpecialMentions.getMention(m, player)))
                 .filter(m -> m.getRight() != null)
                 .filter(m -> m.getRight().available(player))
-                .collect(Collectors.toList());
+                .toList();
         MutableComponent text = new TextComponent("");
         List<Pair<String, SpecialMention>> special = list.stream().filter(m -> !(m.getRight() instanceof OnePlayerMention)).collect(Collectors.toList());
         List<Pair<String, SpecialMention>> players = list.stream().filter(m -> m.getRight() instanceof OnePlayerMention).collect(Collectors.toList());
         special.sort(Comparator.comparing(m -> m.getLeft().toLowerCase()));
-        special.sort(Comparator.comparing(m -> m.getLeft().toLowerCase()));
+        players.sort(Comparator.comparing(m -> m.getLeft().toLowerCase()));
         for (Pair<String, SpecialMention> mention : special) {
             text = text.append(new TextComponent(" ")).append(new TextComponent("@" + mention.getLeft()).withStyle(MentionType.GROUP.getStyle()));
         }
@@ -51,8 +51,8 @@ public class DefaultMentions {
     }
     
     private static List<String> getMentionStrings(ServerPlayer player) {
-        if (player.getPersistentData().contains("minemention_default", Constants.NBT.TAG_LIST)) {
-            ListTag list = player.getPersistentData().getList("minemention_default", Constants.NBT.TAG_STRING);
+        if (player.getPersistentData().contains("minemention_default", Tag.TAG_LIST)) {
+            ListTag list = player.getPersistentData().getList("minemention_default", Tag.TAG_STRING);
             ImmutableList.Builder<String> strings = ImmutableList.builder();
             if (list.isEmpty()) {
                 strings.add("everyone");

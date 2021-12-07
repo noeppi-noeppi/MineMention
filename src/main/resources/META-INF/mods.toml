@@ -15,20 +15,20 @@ description="""
 [[dependencies.minemention]]
     modId="forge"
     mandatory=true
-    versionRange="[37.0.95,)"
+    versionRange="[38.0.15,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.minemention]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.4,)"
+    versionRange="[1.18,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.minemention]]
     modId="libx"
     mandatory=true
-    versionRange="[1.17.1-2.1.9,)"
+    versionRange="[1.18-3.0.0,)"
     ordering="NONE"
     side="BOTH"
