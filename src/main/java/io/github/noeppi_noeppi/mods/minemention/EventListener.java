@@ -133,7 +133,6 @@ public class EventListener {
         event.setComponent(text);
         event.setCanceled(true);
         mentions = DefaultMentions.getMentions(event.getPlayer(), mentions);
-        //noinspection UnstableApiUsage
         List<Predicate<ServerPlayer>> predicates = mentions.stream().map(m -> m.selectPlayers(event.getPlayer())).collect(ImmutableList.toImmutableList());
         // Always show message to sender.
         Predicate<ServerPlayer> predicate = player -> player == event.getPlayer() || predicates.stream().anyMatch(p -> p.test(player));
