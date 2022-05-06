@@ -20,6 +20,8 @@ import net.minecraft.network.chat.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -32,7 +34,9 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public class EventListener {
@@ -72,6 +76,7 @@ public class EventListener {
     public void serverChat(ServerChatEvent event) {
         if (event.getMessage().trim().startsWith("\\")) return; 
         List<SpecialMention> mentions = new ArrayList<>();
+        Set<ServerPlayer> playersToPing = new HashSet<>();
         MutableComponent text = new TextComponent("");
         StringReader reader = new StringReader(event.getMessage());
         StringBuilder current = new StringBuilder();
@@ -84,8 +89,12 @@ public class EventListener {
                 if (mention == null) {
                     current.append("@").append(mentionStr);
                 } else if (mention instanceof OnePlayerMention) {
-                    if (playerList.getPlayerByName(((OnePlayerMention) mention).name) != null) {
+                    ServerPlayer player = playerList.getPlayerByName(((OnePlayerMention) mention).name);
+                    if (player != null) {
                         mentions.add(mention);
+                        if (event.getPlayer() != player) {
+                            playersToPing.add(player);
+                        }
                         text = text.append(ForgeHooks.newChatWithLinks(current.toString()));
                         current = new StringBuilder();
                         text = text.append(new TextComponent("@" + mentionStr)
@@ -137,7 +146,12 @@ public class EventListener {
         // Always show message to sender.
         Predicate<ServerPlayer> predicate = player -> player == event.getPlayer() || predicates.stream().anyMatch(p -> p.test(player));
         MineMention.logger.info(ComponentUtil.getConsoleString(send));
-        playerList.getPlayers().stream().filter(predicate).forEach(player -> player.sendMessage(send, event.getPlayer().getGameProfile().getId()));
+        playerList.getPlayers().stream().filter(predicate).forEach(player -> {
+            player.sendMessage(send, event.getPlayer().getGameProfile().getId());
+            if (playersToPing.contains(player)) {
+                player.playNotifySound(SoundEvents.NOTE_BLOCK_BELL, SoundSource.MASTER, 2.5f, 0.8f);
+            }
+        });
     }
     
     @SubscribeEvent
