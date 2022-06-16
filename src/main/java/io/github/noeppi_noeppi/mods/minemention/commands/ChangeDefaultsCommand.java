@@ -4,12 +4,12 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import io.github.noeppi_noeppi.libx.command.CommandUtil;
 import io.github.noeppi_noeppi.mods.minemention.DefaultMentions;
 import io.github.noeppi_noeppi.mods.minemention.MineMention;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import org.moddingx.libx.command.CommandUtil;
 
 public class ChangeDefaultsCommand implements Command<CommandSourceStack> {
 
@@ -28,7 +28,7 @@ public class ChangeDefaultsCommand implements Command<CommandSourceStack> {
             DefaultMentions.updateMentionStrings(context.getSource().getPlayerOrException(), defaults.build());
         }
         MineMention.getNetwork().updateSpecialMentions(context.getSource().getPlayerOrException());
-        context.getSource().sendSuccess(new TranslatableComponent("minemention.defaults").withStyle(ChatFormatting.GREEN), false);
+        context.getSource().sendSuccess(Component.translatable("minemention.defaults").withStyle(ChatFormatting.GREEN), false);
         return 0;
     }
 }

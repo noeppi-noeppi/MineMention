@@ -1,12 +1,12 @@
 package io.github.noeppi_noeppi.mods.minemention.network;
 
-import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.network.NetworkX;
 import io.github.noeppi_noeppi.mods.minemention.DefaultMentions;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.PacketDistributor;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.network.NetworkX;
 
 public class MineMentionNetwork extends NetworkX {
 
@@ -16,7 +16,7 @@ public class MineMentionNetwork extends NetworkX {
 
     @Override
     protected Protocol getProtocol() {
-        return Protocol.of("2");
+        return Protocol.of("3");
     }
 
     @Override

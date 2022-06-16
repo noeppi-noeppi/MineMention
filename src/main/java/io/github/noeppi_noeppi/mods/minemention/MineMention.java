@@ -1,6 +1,5 @@
 package io.github.noeppi_noeppi.mods.minemention;
 
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
 import io.github.noeppi_noeppi.mods.minemention.mentions.EveryoneMention;
 import io.github.noeppi_noeppi.mods.minemention.mentions.HereMention;
@@ -14,6 +13,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.moddingx.libx.mod.ModX;
 
 @Mod("minemention")
 public final class MineMention extends ModX {

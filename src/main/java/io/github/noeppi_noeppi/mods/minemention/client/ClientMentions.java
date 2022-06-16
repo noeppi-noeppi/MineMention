@@ -3,7 +3,6 @@ package io.github.noeppi_noeppi.mods.minemention.client;
 import com.google.common.collect.ImmutableMap;
 import io.github.noeppi_noeppi.mods.minemention.MentionType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -11,7 +10,7 @@ import java.util.*;
 public class ClientMentions {
 
     private static Map<String, Component> special = ImmutableMap.of();
-    private static Component currentDefault = new TextComponent("error: not yet received");
+    private static Component currentDefault = Component.literal("error: not yet received");
     
     public static MentionType getType(String key, Collection<String> players) {
         if (special.containsKey(key)) {
@@ -33,7 +32,7 @@ public class ClientMentions {
         List<String> playerNames = new ArrayList<>(players);
         playerNames.sort(Comparator.comparing(String::toLowerCase));
         for (String player : playerNames) {
-            pairs.add(Pair.of(player, new TextComponent("Mention player " + player)));
+            pairs.add(Pair.of(player, Component.literal("Mention player " + player)));
         }
         return pairs;
     }

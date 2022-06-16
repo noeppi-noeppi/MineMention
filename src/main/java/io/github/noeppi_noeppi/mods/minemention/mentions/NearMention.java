@@ -1,8 +1,8 @@
 package io.github.noeppi_noeppi.mods.minemention.mentions;
 
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Predicate;
@@ -16,7 +16,7 @@ public class NearMention implements SpecialMention {
     }
     @Override
     public MutableComponent description() {
-        return new TranslatableComponent("minemention.near");
+        return Component.translatable("minemention.near");
     }
 
     @Override

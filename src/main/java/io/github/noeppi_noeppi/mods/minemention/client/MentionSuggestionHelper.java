@@ -91,7 +91,7 @@ public class MentionSuggestionHelper extends CommandSuggestions {
         if (current != null) {
             this.pendingSuggestions = SuggestionUtil.suggest(ClientMentions.suggest(players), new SuggestionsBuilder(cs, at));
             this.pendingSuggestions.thenRun(() -> {
-                if (this.allowSuggestions && this.minecraft.options.autoSuggestions) {
+                if (this.allowSuggestions && this.minecraft.options.autoSuggestions().get()) {
                     this.showSuggestions(false);
                 }
             });

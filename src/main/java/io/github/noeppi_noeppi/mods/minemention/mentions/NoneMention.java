@@ -1,8 +1,8 @@
 package io.github.noeppi_noeppi.mods.minemention.mentions;
 
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Predicate;
@@ -17,7 +17,7 @@ public class NoneMention implements SpecialMention {
 
     @Override
     public MutableComponent description() {
-        return new TextComponent("");
+        return Component.empty();
     }
 
     @Override

@@ -4,9 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.StringReader;
-import io.github.noeppi_noeppi.libx.event.ConfigLoadedEvent;
-import io.github.noeppi_noeppi.libx.render.RenderHelper;
-import io.github.noeppi_noeppi.libx.util.ComponentUtil;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
 import io.github.noeppi_noeppi.mods.minemention.client.ClientMentions;
@@ -32,6 +29,9 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.moddingx.libx.event.ConfigLoadedEvent;
+import org.moddingx.libx.render.RenderHelper;
+import org.moddingx.libx.util.game.ComponentUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -74,10 +74,10 @@ public class EventListener {
     
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void serverChat(ServerChatEvent event) {
-        if (event.getMessage().trim().startsWith("\\")) return; 
+        if (event.getMessage().trim().startsWith("\\") || event.getPlayer() == null) return; 
         List<SpecialMention> mentions = new ArrayList<>();
         Set<ServerPlayer> playersToPing = new HashSet<>();
-        MutableComponent text = new TextComponent("");
+        MutableComponent text = Component.empty();
         StringReader reader = new StringReader(event.getMessage());
         StringBuilder current = new StringBuilder();
         PlayerList playerList = event.getPlayer().getLevel().getServer().getPlayerList();
@@ -97,10 +97,10 @@ public class EventListener {
                         }
                         text = text.append(ForgeHooks.newChatWithLinks(current.toString()));
                         current = new StringBuilder();
-                        text = text.append(new TextComponent("@" + mentionStr)
+                        text = text.append(Component.literal("@" + mentionStr)
                                 .withStyle(MentionType.PLAYER.getStyle())
                                 .withStyle(Style.EMPTY
-                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("minemention.reply")))
+                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("minemention.reply")))
                                         .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + mentionStr + " "))
                                 )
                         );
@@ -111,10 +111,10 @@ public class EventListener {
                     mentions.add(mention);
                     text = text.append(ForgeHooks.newChatWithLinks(current.toString()));
                     current = new StringBuilder();
-                    text = text.append(new TextComponent("@" + mentionStr)
+                    text = text.append(Component.literal("@" + mentionStr)
                             .withStyle(MentionType.GROUP.getStyle())
                             .withStyle(Style.EMPTY
-                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("minemention.reply")))
+                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("minemention.reply")))
                                     .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + mentionStr + " "))
                             )
                     );
@@ -125,19 +125,19 @@ public class EventListener {
         }
         text = text.append(ForgeHooks.newChatWithLinks(current.toString()));
 
-        MutableComponent tooltip = new TranslatableComponent("minemention.reply");
+        MutableComponent tooltip = Component.translatable("minemention.reply");
         if (mentions.isEmpty()) {
-            tooltip = tooltip.append(new TextComponent("\n")
-                    .append(new TranslatableComponent("minemention.sent"))
+            tooltip = tooltip.append(Component.literal("\n")
+                    .append(Component.translatable("minemention.sent"))
                     .append(DefaultMentions.getDefaultMentionString(event.getPlayer())));
         }
 
-        MutableComponent send = new TextComponent("<").append(event.getPlayer().getDisplayName().copy()
+        MutableComponent send = Component.literal("<").append(event.getPlayer().getDisplayName().copy()
                 .withStyle(Style.EMPTY
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))
                         .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + event.getPlayer().getGameProfile().getName() + " "))
                 )
-        ).append(new TextComponent("> ")).append(text);
+        ).append(Component.literal("> ")).append(text);
 
         event.setComponent(text);
         event.setCanceled(true);
@@ -147,7 +147,7 @@ public class EventListener {
         Predicate<ServerPlayer> predicate = player -> player == event.getPlayer() || predicates.stream().anyMatch(p -> p.test(player));
         MineMention.logger.info(ComponentUtil.getConsoleString(send));
         playerList.getPlayers().stream().filter(predicate).forEach(player -> {
-            player.sendMessage(send, event.getPlayer().getGameProfile().getId());
+            player.sendSystemMessage(send);
             if (playersToPing.contains(player)) {
                 player.playNotifySound(SoundEvents.NOTE_BLOCK_BELL, SoundSource.MASTER, 2.5f, 0.8f);
             }
@@ -159,7 +159,7 @@ public class EventListener {
     public void renderChat(RenderGameOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (event.getType() == RenderGameOverlayEvent.ElementType.CHAT && mc.screen instanceof ChatScreen) {
-            PoseStack poseStack = event.getMatrixStack();
+            PoseStack poseStack = event.getPoseStack();
             poseStack.pushPose();
             Font font = mc.font;
             int width = font.width(ClientMentions.getCurrentDefault());
@@ -167,7 +167,7 @@ public class EventListener {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.setShaderTexture(0, RenderHelper.TEXTURE_WHITE);
-            RenderSystem.setShaderColor(0, 0, 0, (float) mc.options.textBackgroundOpacity);
+            RenderSystem.setShaderColor(0, 0, 0, (float) (double) mc.options.textBackgroundOpacity().get());
             GuiComponent.blit(poseStack, 0, 0, 0, 0, width + 4, font.lineHeight + 4, 256, 256);
             RenderSystem.disableBlend();
             font.drawShadow(poseStack, ClientMentions.getCurrentDefault(), 2, 2, 0xFFFFFF);

@@ -1,9 +1,9 @@
 package io.github.noeppi_noeppi.mods.minemention.network;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.noeppi_noeppi.libx.network.PacketSerializer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import org.moddingx.libx.network.PacketSerializer;
 
 import java.util.Map;
 

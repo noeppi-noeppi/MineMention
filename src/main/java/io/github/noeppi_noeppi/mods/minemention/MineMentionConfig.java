@@ -1,8 +1,8 @@
 package io.github.noeppi_noeppi.mods.minemention;
 
-import io.github.noeppi_noeppi.libx.annotation.config.RegisterConfig;
-import io.github.noeppi_noeppi.libx.config.Config;
 import net.minecraft.resources.ResourceLocation;
+import org.moddingx.libx.annotation.config.RegisterConfig;
+import org.moddingx.libx.config.Config;
 
 import java.util.Map;
 
