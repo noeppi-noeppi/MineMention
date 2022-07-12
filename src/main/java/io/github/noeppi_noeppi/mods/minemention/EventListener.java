@@ -21,7 +21,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -45,16 +46,16 @@ public class EventListener {
     
     @SubscribeEvent
     public void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getPlayer() instanceof ServerPlayer) {
-            MineMention.getNetwork().updateSpecialMentions((ServerPlayer) event.getPlayer());
+        if (event.getEntity() instanceof ServerPlayer) {
+            MineMention.getNetwork().updateSpecialMentions((ServerPlayer) event.getEntity());
         }
     }
     
     @SubscribeEvent
-    public void serverTick(TickEvent.WorldTickEvent event) {
-        if (this.needsUpdate && event.phase == TickEvent.Phase.START && event.world instanceof ServerLevel) {
+    public void serverTick(TickEvent.LevelTickEvent event) {
+        if (this.needsUpdate && event.phase == TickEvent.Phase.START && event.level instanceof ServerLevel level) {
             this.needsUpdate = false;
-            for (ServerPlayer player : ((ServerLevel) event.world).getServer().getPlayerList().getPlayers()) {
+            for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
                 MineMention.getNetwork().updateSpecialMentions(player);
             }
         }
@@ -156,9 +157,9 @@ public class EventListener {
     
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void renderChat(RenderGameOverlayEvent.Post event) {
+    public void renderChat(RenderGuiOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
-        if (event.getType() == RenderGameOverlayEvent.ElementType.CHAT && mc.screen instanceof ChatScreen) {
+        if (VanillaGuiOverlay.CHAT_PANEL.id().equals(event.getOverlay().id()) && mc.screen instanceof ChatScreen) {
             PoseStack poseStack = event.getPoseStack();
             poseStack.pushPose();
             Font font = mc.font;
