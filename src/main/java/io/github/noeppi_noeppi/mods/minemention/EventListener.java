@@ -74,12 +74,12 @@ public class EventListener {
     }
     
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void serverChat(ServerChatEvent event) {
-        if (event.getMessage().trim().startsWith("\\") || event.getPlayer() == null) return; 
+    public void serverChat(ServerChatEvent.Submitted event) {
+        if (event.getRawText().trim().startsWith("\\") || event.getPlayer() == null) return; 
         List<SpecialMention> mentions = new ArrayList<>();
         Set<ServerPlayer> playersToPing = new HashSet<>();
         MutableComponent text = Component.empty();
-        StringReader reader = new StringReader(event.getMessage());
+        StringReader reader = new StringReader(event.getRawText());
         StringBuilder current = new StringBuilder();
         PlayerList playerList = event.getPlayer().getLevel().getServer().getPlayerList();
         while (reader.canRead()) {
@@ -140,7 +140,6 @@ public class EventListener {
                 )
         ).append(Component.literal("> ")).append(text);
 
-        event.setComponent(text);
         event.setCanceled(true);
         mentions = DefaultMentions.getMentions(event.getPlayer(), mentions);
         List<Predicate<ServerPlayer>> predicates = mentions.stream().map(m -> m.selectPlayers(event.getPlayer())).collect(ImmutableList.toImmutableList());
