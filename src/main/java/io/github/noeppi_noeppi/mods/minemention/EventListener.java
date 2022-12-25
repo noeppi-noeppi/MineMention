@@ -153,25 +153,4 @@ public class EventListener {
             }
         });
     }
-    
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public void renderChat(RenderGuiOverlayEvent.Post event) {
-        Minecraft mc = Minecraft.getInstance();
-        if (VanillaGuiOverlay.CHAT_PANEL.id().equals(event.getOverlay().id()) && mc.screen instanceof ChatScreen) {
-            PoseStack poseStack = event.getPoseStack();
-            poseStack.pushPose();
-            Font font = mc.font;
-            int width = font.width(ClientMentions.getCurrentDefault());
-            poseStack.translate(event.getWindow().getGuiScaledWidth() - (width + 6), event.getWindow().getGuiScaledHeight() - (2 * (font.lineHeight + 6)), 0);
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.setShaderTexture(0, RenderHelper.TEXTURE_WHITE);
-            RenderSystem.setShaderColor(0, 0, 0, (float) (double) mc.options.textBackgroundOpacity().get());
-            GuiComponent.blit(poseStack, 0, 0, 0, 0, width + 4, font.lineHeight + 4, 256, 256);
-            RenderSystem.disableBlend();
-            font.drawShadow(poseStack, ClientMentions.getCurrentDefault(), 2, 2, 0xFFFFFF);
-            poseStack.popPose();
-        }
-    }
 }
