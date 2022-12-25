@@ -42,10 +42,10 @@ public class DefaultMentions {
         special.sort(Comparator.comparing(m -> m.getLeft().toLowerCase()));
         players.sort(Comparator.comparing(m -> m.getLeft().toLowerCase()));
         for (Pair<String, SpecialMention> mention : special) {
-            text = text.append(Component.literal(" ")).append(Component.literal("@" + mention.getLeft()).withStyle(MentionType.GROUP.getStyle()));
+            text = text.append(Component.literal("")).append(Component.literal("@" + mention.getLeft()).withStyle(MentionType.GROUP.getStyle()));
         }
         for (Pair<String, SpecialMention> mention : players) {
-            text = text.append(Component.literal(" ")).append(Component.literal("@" + mention.getLeft()).withStyle(MentionType.PLAYER.getStyle()));
+            text = text.append(Component.literal("")).append(Component.literal("@" + mention.getLeft()).withStyle(MentionType.PLAYER.getStyle()));
         }
         return text;
     }
