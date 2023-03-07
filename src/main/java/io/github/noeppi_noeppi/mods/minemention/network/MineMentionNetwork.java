@@ -21,10 +21,10 @@ public class MineMentionNetwork extends NetworkX {
 
     @Override
     protected void registerPackets() {
-        this.register(new SpecialMentionUpdateSerializer(), () -> SpecialMentionUpdateHandler::handle, NetworkDirection.PLAY_TO_CLIENT);
+        this.registerGame(NetworkDirection.PLAY_TO_CLIENT, new SpecialMentionUpdateMessage.Serializer(), () -> SpecialMentionUpdateMessage.Handler::new);
     }
     
     public void updateSpecialMentions(ServerPlayer player) {
-        this.channel.send(PacketDistributor.PLAYER.with(() -> player), new SpecialMentionUpdateSerializer.SpecialMentionUpdateMessage(SpecialMentions.getSyncPacket(player), DefaultMentions.getDefaultMentionString(player)));
+        this.channel.send(PacketDistributor.PLAYER.with(() -> player), new SpecialMentionUpdateMessage(SpecialMentions.getSyncPacket(player), DefaultMentions.getDefaultMentionString(player)));
     }
 }

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[42,)"
+loaderVersion="[44,)"
 license="The Apache License, Version 2.0"
 
 [[mods]]
@@ -15,20 +15,20 @@ description="""
 [[dependencies.minemention]]
     modId="forge"
     mandatory=true
-    versionRange="[42.0.0,)"
+    versionRange="[44.1.20,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.minemention]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.1,)"
+    versionRange="[1.19.3,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.minemention]]
     modId="libx"
     mandatory=true
-    versionRange="[1.19.1-4.1.0,)"
+    versionRange="[1.19.3-4.3.0,)"
     ordering="NONE"
     side="BOTH"

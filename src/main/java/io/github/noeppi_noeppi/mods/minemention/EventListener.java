@@ -74,7 +74,7 @@ public class EventListener {
     }
     
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void serverChat(ServerChatEvent.Submitted event) {
+    public void serverChat(ServerChatEvent event) {
         if (event.getRawText().trim().startsWith("\\") || event.getPlayer() == null) return; 
         List<SpecialMention> mentions = new ArrayList<>();
         Set<ServerPlayer> playersToPing = new HashSet<>();
@@ -149,7 +149,7 @@ public class EventListener {
         playerList.getPlayers().stream().filter(predicate).forEach(player -> {
             player.sendSystemMessage(send);
             if (playersToPing.contains(player)) {
-                player.playNotifySound(SoundEvents.NOTE_BLOCK_BELL, SoundSource.MASTER, 2.5f, 0.8f);
+                player.playNotifySound(SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.MASTER, 2.5f, 0.8f);
             }
         });
     }
