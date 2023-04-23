@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.minemention.api;
 
 import io.github.noeppi_noeppi.mods.minemention.MineMention;
-import io.github.noeppi_noeppi.mods.minemention.MineMentionConfig;
+import io.github.noeppi_noeppi.mods.minemention.config.MineMentionConfig;
 import io.github.noeppi_noeppi.mods.minemention.mentions.EveryoneMention;
 import io.github.noeppi_noeppi.mods.minemention.mentions.NoneMention;
 import io.github.noeppi_noeppi.mods.minemention.mentions.OnePlayerMention;

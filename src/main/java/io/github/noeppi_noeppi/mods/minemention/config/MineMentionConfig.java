@@ -1,4 +1,4 @@
-package io.github.noeppi_noeppi.mods.minemention;
+package io.github.noeppi_noeppi.mods.minemention.config;
 
 import net.minecraft.resources.ResourceLocation;
 import org.moddingx.libx.annotation.config.RegisterConfig;
@@ -6,7 +6,7 @@ import org.moddingx.libx.config.Config;
 
 import java.util.Map;
 
-@RegisterConfig
+@RegisterConfig("mentions")
 public class MineMentionConfig {
 
     @Config({

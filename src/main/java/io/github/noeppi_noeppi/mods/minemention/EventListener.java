@@ -8,6 +8,8 @@ import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
 import io.github.noeppi_noeppi.mods.minemention.client.ClientMentions;
 import io.github.noeppi_noeppi.mods.minemention.commands.MineMentionCommands;
+import io.github.noeppi_noeppi.mods.minemention.config.MineMentionClientConfig;
+import io.github.noeppi_noeppi.mods.minemention.config.MineMentionConfig;
 import io.github.noeppi_noeppi.mods.minemention.mentions.OnePlayerMention;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -158,19 +160,25 @@ public class EventListener {
     @OnlyIn(Dist.CLIENT)
     public void renderChat(RenderGuiOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
+        if (MineMentionClientConfig.displayLocation == MineMentionClientConfig.DisplayLocation.HIDDEN) return;
         if (VanillaGuiOverlay.CHAT_PANEL.id().equals(event.getOverlay().id()) && mc.screen instanceof ChatScreen) {
             PoseStack poseStack = event.getPoseStack();
             poseStack.pushPose();
             Font font = mc.font;
             int width = font.width(ClientMentions.getCurrentDefault());
-            poseStack.translate(event.getWindow().getGuiScaledWidth() - (width + 6), event.getWindow().getGuiScaledHeight() - (2 * (font.lineHeight + 6)), 0);
+            if (MineMentionClientConfig.displayLocation == MineMentionClientConfig.DisplayLocation.LEFT) {
+                poseStack.translate(2, event.getWindow().getGuiScaledHeight() - (2 * (font.lineHeight + 6)), 0);
+            } else {
+                poseStack.translate(event.getWindow().getGuiScaledWidth() - (width + 6), event.getWindow().getGuiScaledHeight() - (2 * (font.lineHeight + 6)), 0);
+            }
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.setShaderTexture(0, RenderHelper.TEXTURE_WHITE);
             RenderSystem.setShaderColor(0, 0, 0, (float) (double) mc.options.textBackgroundOpacity().get());
             GuiComponent.blit(poseStack, 0, 0, 0, 0, width + 4, font.lineHeight + 4, 256, 256);
+            RenderHelper.resetColor();
             RenderSystem.disableBlend();
-            font.drawShadow(poseStack, ClientMentions.getCurrentDefault(), 2, 2, 0xFFFFFF);
+            font.drawShadow(poseStack, ClientMentions.getCurrentDefault(), 2, 2, 0xFFFFFFFF);
             poseStack.popPose();
         }
     }

@@ -36,16 +36,27 @@ public class DefaultMentions {
                 .filter(m -> m.getRight() != null)
                 .filter(m -> m.getRight().available(player))
                 .toList();
+        boolean empty = true;
         MutableComponent text = Component.empty();
         List<Pair<String, SpecialMention>> special = list.stream().filter(m -> !(m.getRight() instanceof OnePlayerMention)).collect(Collectors.toList());
         List<Pair<String, SpecialMention>> players = list.stream().filter(m -> m.getRight() instanceof OnePlayerMention).collect(Collectors.toList());
         special.sort(Comparator.comparing(m -> m.getLeft().toLowerCase()));
         players.sort(Comparator.comparing(m -> m.getLeft().toLowerCase()));
         for (Pair<String, SpecialMention> mention : special) {
-            text = text.append(Component.literal(" ")).append(Component.literal("@" + mention.getLeft()).withStyle(MentionType.GROUP.getStyle()));
+            if (empty) {
+                empty = false;
+            } else {
+                text = text.append(Component.literal(" "));
+            }
+            text = text.append(Component.literal("@" + mention.getLeft()).withStyle(MentionType.GROUP.getStyle()));
         }
         for (Pair<String, SpecialMention> mention : players) {
-            text = text.append(Component.literal(" ")).append(Component.literal("@" + mention.getLeft()).withStyle(MentionType.PLAYER.getStyle()));
+            if (empty) {
+                empty = false;
+            } else {
+                text = text.append(Component.literal(" "));
+            }
+            text = text.append(Component.literal("@" + mention.getLeft()).withStyle(MentionType.PLAYER.getStyle()));
         }
         return text;
     }
