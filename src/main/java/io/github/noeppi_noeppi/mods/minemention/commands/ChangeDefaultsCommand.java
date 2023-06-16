@@ -28,7 +28,7 @@ public class ChangeDefaultsCommand implements Command<CommandSourceStack> {
             DefaultMentions.updateMentionStrings(context.getSource().getPlayerOrException(), defaults.build());
         }
         MineMention.getNetwork().updateSpecialMentions(context.getSource().getPlayerOrException());
-        context.getSource().sendSuccess(Component.translatable("minemention.defaults").withStyle(ChatFormatting.GREEN), false);
+        context.getSource().sendSuccess(() -> Component.translatable("minemention.defaults").withStyle(ChatFormatting.GREEN), false);
         return 0;
     }
 }

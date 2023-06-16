@@ -13,7 +13,6 @@ import io.github.noeppi_noeppi.mods.minemention.config.MineMentionConfig;
 import io.github.noeppi_noeppi.mods.minemention.mentions.OnePlayerMention;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.network.chat.*;
 import net.minecraft.server.level.ServerLevel;
@@ -83,7 +82,7 @@ public class EventListener {
         MutableComponent text = Component.empty();
         StringReader reader = new StringReader(event.getRawText());
         StringBuilder current = new StringBuilder();
-        PlayerList playerList = event.getPlayer().getLevel().getServer().getPlayerList();
+        PlayerList playerList = event.getPlayer().serverLevel().getServer().getPlayerList();
         while (reader.canRead()) {
             char chr = reader.read();
             if (chr == '@') {
@@ -162,7 +161,7 @@ public class EventListener {
         Minecraft mc = Minecraft.getInstance();
         if (MineMentionClientConfig.displayLocation == MineMentionClientConfig.DisplayLocation.HIDDEN) return;
         if (VanillaGuiOverlay.CHAT_PANEL.id().equals(event.getOverlay().id()) && mc.screen instanceof ChatScreen) {
-            PoseStack poseStack = event.getPoseStack();
+            PoseStack poseStack = event.getGuiGraphics().pose();
             poseStack.pushPose();
             Font font = mc.font;
             int width = font.width(ClientMentions.getCurrentDefault());
@@ -173,12 +172,11 @@ public class EventListener {
             }
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            RenderSystem.setShaderTexture(0, RenderHelper.TEXTURE_WHITE);
             RenderSystem.setShaderColor(0, 0, 0, (float) (double) mc.options.textBackgroundOpacity().get());
-            GuiComponent.blit(poseStack, 0, 0, 0, 0, width + 4, font.lineHeight + 4, 256, 256);
+            event.getGuiGraphics().blit(RenderHelper.TEXTURE_WHITE, 0, 0, 0, 0, width + 4, font.lineHeight + 4, 256, 256);
             RenderHelper.resetColor();
             RenderSystem.disableBlend();
-            font.drawShadow(poseStack, ClientMentions.getCurrentDefault(), 2, 2, 0xFFFFFFFF);
+            event.getGuiGraphics().drawString(font, ClientMentions.getCurrentDefault(), 2, 2, 0xFFFFFFFF);
             poseStack.popPose();
         }
     }

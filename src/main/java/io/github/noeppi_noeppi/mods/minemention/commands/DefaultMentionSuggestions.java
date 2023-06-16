@@ -30,7 +30,7 @@ public class DefaultMentionSuggestions {
                     builder.suggest(others + entry.getKey(), () -> entry.getValue().getString());
                 }
             }
-            for (ServerPlayer player : context.getSource().getPlayerOrException().getLevel().getServer().getPlayerList().getPlayers()) {
+            for (ServerPlayer player : context.getSource().getPlayerOrException().serverLevel().getServer().getPlayerList().getPlayers()) {
                 if (player.getGameProfile().getName().toLowerCase().startsWith(current.toLowerCase())) {
                     builder.suggest(others + player.getGameProfile().getName());
                 }

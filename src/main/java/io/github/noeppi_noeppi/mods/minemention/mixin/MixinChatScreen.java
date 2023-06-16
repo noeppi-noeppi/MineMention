@@ -1,8 +1,8 @@
 package io.github.noeppi_noeppi.mods.minemention.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.noeppi_noeppi.mods.minemention.client.MentionSuggestionHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
@@ -87,10 +87,10 @@ public class MixinChatScreen {
     }
 
     @Inject(
-            method = "Lnet/minecraft/client/gui/screens/ChatScreen;render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/CommandSuggestions;render(Lcom/mojang/blaze3d/vertex/PoseStack;II)V")
+            method = "Lnet/minecraft/client/gui/screens/ChatScreen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/CommandSuggestions;render(Lnet/minecraft/client/gui/GuiGraphics;II)V")
     )
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        this.mentions.render(poseStack, mouseX, mouseY);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+        this.mentions.render(graphics, mouseX, mouseY);
     }
 }

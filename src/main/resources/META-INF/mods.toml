@@ -1,10 +1,10 @@
 modLoader="javafml"
-loaderVersion="[45,)"
+loaderVersion="[47,)"
 license="The Apache License, Version 2.0"
 
 [[mods]]
 modId="minemention"
-version="${file.jarVersion}"
+version="${version}"
 displayName="Minemention"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/minemention"
 updateJSONURL="https://assets.melanx.de/updates/minemention.json"
@@ -15,20 +15,20 @@ description="""
 [[dependencies.minemention]]
     modId="forge"
     mandatory=true
-    versionRange="[45.0.46,)"
+    versionRange="[47.0.2,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.minemention]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.4,)"
+    versionRange="[1.20.1,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.minemention]]
     modId="libx"
     mandatory=true
-    versionRange="[1.19.4-4.4.1,)"
+    versionRange="[1.20.1-5.0.1,)"
     ordering="NONE"
     side="BOTH"

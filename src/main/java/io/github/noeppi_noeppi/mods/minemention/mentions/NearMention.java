@@ -21,6 +21,6 @@ public class NearMention implements SpecialMention {
 
     @Override
     public Predicate<ServerPlayer> selectPlayers(ServerPlayer sender) {
-        return player -> sender.level.dimension().equals(player.level.dimension()) && sender.position().distanceToSqr(player.position()) <= 100 * 100;
+        return player -> sender.level().dimension().equals(player.level().dimension()) && sender.position().distanceToSqr(player.position()) <= 100 * 100;
     }
 }

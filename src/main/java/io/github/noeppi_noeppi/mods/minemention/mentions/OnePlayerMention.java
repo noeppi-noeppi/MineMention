@@ -27,6 +27,6 @@ public class OnePlayerMention implements SpecialMention {
 
     @Override
     public boolean available(ServerPlayer sender) {
-        return sender.getLevel().getServer().getPlayerList().getPlayerByName(this.name) != null;
+        return sender.serverLevel().getServer().getPlayerList().getPlayerByName(this.name) != null;
     }
 }

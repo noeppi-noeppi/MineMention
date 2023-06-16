@@ -22,6 +22,6 @@ public class HereMention implements SpecialMention {
 
     @Override
     public Predicate<ServerPlayer> selectPlayers(ServerPlayer sender) {
-        return player -> sender.level.dimension().equals(player.level.dimension());
+        return player -> sender.level().dimension().equals(player.level().dimension());
     }
 }
